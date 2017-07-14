@@ -7,6 +7,8 @@ import isDirectory from 'is-directory';
 import isExecutable from 'is-executable';
 import isFunction from 'lodash/isFunction';
 
+import { spawn } from 'child_process';
+
 /**
  * Class which represents context of an script execution.
  */
@@ -123,5 +125,67 @@ export default class Context {
     }
 
     return null;
+  }
+
+  /**
+   * Executes given executable or builtin command with given command line
+   * arguments. The method will launch the builtin command or executable found
+   * from the file system and return it's exit status in a promise.
+   *
+   * @param {string} executable Name of the executable or builtin command to
+   *                            execute with given command line arguments.
+   * @param {...string} args Optional command line arguments given for the
+   *                         executable or builtin command.
+   * @return {Promise} A promise that will contain an object containing the
+   *                   exit status of the executed executable, along with the
+   *                   process identifier singal that was used to kill the
+   *                   process, if the process was killed.
+   */
+  execute (executable, ...args) {
+    const resolvedExecutable = this.resolveExecutable(executable);
+
+    if (!resolvedExecutable) {
+      return Promise.reject(new Error(`No such file or directory: ${executable}`));
+    }
+
+    // TODO: Expand variable names and wildcards from arguments.
+
+    if (isFunction(resolvedExecutable)) {
+      return new Promise((resolve, reject) => {
+        let status;
+
+        try {
+          status = resolvedExecutable(this, executable, ...args);
+        } catch (err) {
+          reject(err);
+          return;
+        }
+
+        resolve({ status });
+      });
+    }
+
+    return new Promise((resolve, reject) => {
+      const childProcess = spawn(resolvedExecutable, args, {
+        cwd: this.cwd,
+        env: this.environment,
+        argv0: executable,
+        stdio: 'pipe'
+      });
+
+      childProcess.on('error', reject);
+
+      childProcess.on('close', (status, signal) => {
+        resolve({
+          pid: childProcess.pid,
+          status,
+          signal
+        });
+      });
+
+      // TODO: Add support for pipes. Also pipe stdin from context by default.
+      childProcess.stdout.on('data', data => this.stdout.emit('data', data));
+      childProcess.stderr.on('data', data => this.stderr.emit('data', data));
+    });
   }
 }
