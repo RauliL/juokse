@@ -1,9 +1,11 @@
+import builtinCommands from './builtins';
 import path from 'path';
 import through from 'through';
 
 import isArray from 'lodash/isArray';
 import isDirectory from 'is-directory';
 import isExecutable from 'is-executable';
+import isFunction from 'lodash/isFunction';
 
 /**
  * Class which represents context of an script execution.
@@ -78,24 +80,39 @@ export default class Context {
   }
 
   /**
-   * Determines location of an executable by searching for it from directories
-   * included in this context's `PATH` environment variable. Returns the full
-   * absolute path of the first suitable executable found, or null if it cannot
-   * be found.
+   * Determines location of an executable by searching for it from builtin
+   * commands and directories included in this context's `PATH` environment
+   * variable. Returns the full absolute path of the first suitable executable
+   * found, or null if it cannot be found.
+   *
+   * This method also searches for builtin commands, such as 'cd'. If a
+   * builtin command's name matches with given executable name, a function
+   * callback is returned instead of a path. This function callback takes in
+   * three arguments: context instance, name of the executable and variadic
+   * amount of command line arguments given for the command. The function
+   * callback returns exit status as integer, which is 0 if the builtin command
+   * executed successfully and non-zero if an error occurred.
    *
    * @param {string} executable Name of the executable to look for. If absolute
-   *                            path is given, no search through `PATH`
-   *                            components is being performed.
-   * @return {?string} Full path to the first executable found from file system
-   *                   that matches with given name of an executable, or null
-   *                   if no suitable match was found.
+   *                            path is given, no search through `PATH` nor
+   *                            builtin commands is being performed.
+   * @return {?(function|string)} Either a function or full path to the first
+   *                              executable found from the file system that
+   *                              matches with given name of an executable, or
+   *                              null if no suitable match was found.
    */
   resolveExecutable (executable) {
     if (path.isAbsolute(executable)) {
       return isExecutable.sync(executable) ? executable : null;
     }
 
-    // TODO: Add support for builtin commands.
+    if (builtinCommands.hasOwnProperty(executable)) {
+      const builtin = builtinCommands[executable];
+
+      if (isFunction(builtin)) {
+        return builtin;
+      }
+    }
 
     for (let pathComponent of this.path) {
       const candidate = path.join(pathComponent, executable);
