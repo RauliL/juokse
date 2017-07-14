@@ -13,7 +13,7 @@ export function run () {
   const program = require('commander');
 
   program
-    .version('0.0.1')
+    .version('0.0.2')
     .usage('[options] <file> [arguments]')
     .parse(process.argv);
 

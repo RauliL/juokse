@@ -1,6 +1,6 @@
 {
   "name": "juokse",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Batch processor with Python like syntax",
   "author": "Rauli Laine",
   "license": "BSD-2-Clause",
