@@ -25,16 +25,23 @@
     "gulp-plumber": "^1.1.0"
   },
   "files": [
+    "bin/",
     "lib/",
     "src/",
     "LICENSE",
     "README.md"
   ],
+  "bin": {
+    "juokse": "./bin/juokse"
+  },
   "dependencies": {
+    "chalk": "^2.0.1",
+    "commander": "^2.11.0",
     "homedir": "^0.6.0",
     "is-directory": "^0.3.1",
     "is-executable": "^1.0.1",
     "lodash": "^4.17.4",
+    "moment": "^2.18.1",
     "through": "^2.3.8"
   }
 }
