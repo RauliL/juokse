@@ -3,6 +3,7 @@ import through from 'through';
 
 import isArray from 'lodash/isArray';
 import isDirectory from 'is-directory';
+import isExecutable from 'is-executable';
 
 /**
  * Class which represents context of an script execution.
@@ -74,5 +75,36 @@ export default class Context {
     } else {
       this.environment.PATH = `${value}`;
     }
+  }
+
+  /**
+   * Determines location of an executable by searching for it from directories
+   * included in this context's `PATH` environment variable. Returns the full
+   * absolute path of the first suitable executable found, or null if it cannot
+   * be found.
+   *
+   * @param {string} executable Name of the executable to look for. If absolute
+   *                            path is given, no search through `PATH`
+   *                            components is being performed.
+   * @return {?string} Full path to the first executable found from file system
+   *                   that matches with given name of an executable, or null
+   *                   if no suitable match was found.
+   */
+  resolveExecutable (executable) {
+    if (path.isAbsolute(executable)) {
+      return isExecutable.sync(executable) ? executable : null;
+    }
+
+    // TODO: Add support for builtin commands.
+
+    for (let pathComponent of this.path) {
+      const candidate = path.join(pathComponent, executable);
+
+      if (isExecutable.sync(candidate)) {
+        return candidate;
+      }
+    }
+
+    return null;
   }
 }
