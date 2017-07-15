@@ -1,46 +1,55 @@
 import homedir from 'homedir';
 
-const builtinCommands = {
-  cd (context, ...args) {
-    let directory;
+function builtinCommand (minArgCount, maxArgCount, callback) {
+  return function (context, executable, ...args) {
+    if (args.length < minArgCount) {
+      context.stderr.write(`${executable}: Too few arguments\n`);
 
-    if (args.length < 2) {
-      const home = homedir();
-
-      // TODO: Decide whether home directory should be always read from `HOME`
-      // environment variable instead.
-      if (!home) {
-        context.stderr.write(`${args[0]}: Unable to determine home directory\n`);
-        return 1;
-      }
-      directory = home;
-    } else if (args.length > 2) {
-      context.stderr.write(`${args[0]}: Too many arguments\n`);
       return 1;
-    } else {
-      directory = args[1];
-    }
+    } else if (args.length > maxArgCount) {
+      context.stderr.write(`${executable}: Too many arguments\n`);
 
-    try {
-      context.cwd = directory;
-    } catch (err) {
-      context.stderr.write(`${args[0]}: Directory '${directory}' does not exist\n`);
       return 1;
     }
 
-    return 0;
-  },
+    return callback(context, ...args);
+  };
+}
 
-  pwd (context, ...args) {
-    if (args.length > 1) {
-      context.stderr.write(`${args[0]}: Too many arguments\n`);
+const builtinCommandCd = builtinCommand(0, 1, (context, directory) => {
+  if (!directory) {
+    const home = homedir();
+
+    // TODO: Decide whether home directory should be always read from `HOME`
+    // environment variable instead.
+    if (!home) {
+      context.stderr.write(`Unable to determine home directory\n`);
+
       return 1;
     }
-
-    context.stdout.write(context.cwd);
-
-    return 0;
+    directory = home;
   }
-};
 
-export default builtinCommands;
+  try {
+    context.cwd = directory;
+  } catch (err) {
+    context.stderr.write(`Directory '${directory}' does not exist\n`);
+
+    return 1;
+  }
+
+  return 0;
+});
+
+const builtinCommandPwd = builtinCommand(0, 0, (context) => {
+  context.stdout.write(context.cwd);
+
+  return 0;
+});
+
+export default {
+  cd: builtinCommandCd,
+  false: builtinCommand(0, 0, () => 1),
+  pwd: builtinCommandPwd,
+  true: builtinCommand(0, 0, () => 0)
+};
