@@ -7,6 +7,7 @@ import path from 'path';
 
 import isUndefined from 'lodash/isUndefined';
 
+import { EXIT_STATUS_ERROR } from './status';
 import { parse } from './parser';
 import { execVisitor } from './visitor';
 
@@ -29,7 +30,7 @@ export function run () {
   // TODO: Add support for reading input from stdin.
   if (!program.args.length || program.args[0] === '-') {
     process.stderr.write(`${path.basename(process.argv[1])}: Missing filename\n`);
-    process.exit(1);
+    process.exit(EXIT_STATUS_ERROR);
   }
 
   compileFromFile(context, program.args[0]);
@@ -40,6 +41,8 @@ function createContext () {
 
   // Copy environment variables from system into context.
   Object.assign(instance.environment, process.env);
+
+  instance.on('exit', status => process.exit(status));
 
   instance.on('process start', ({ executable, args }) => {
     log(`${[executable, ...args].join(' ')}`, process.stdout, chalk.green);
@@ -63,13 +66,12 @@ function execNodes (context, nodes) {
     execVisitor[node.type](context, node)
       .catch(err => {
         console.error(err);
-        process.exit(1);
+        process.exit(EXIT_STATUS_ERROR);
       })
       .then(({ status }) => {
         if (status !== 0) {
           log(`Process exited with status ${status}`, process.stdout, chalk.red);
-          process.exit(1);
-          return;
+          process.exit(EXIT_STATUS_ERROR);
         }
         execNextNode();
       });
