@@ -12,6 +12,10 @@
     "url": "https://github.com/RauliL/juokse/issues"
   },
   "homepage": "https://github.com/RauliL/juokse#readme",
+  "keywords": [
+    "shell",
+    "script"
+  ],
   "scripts": {
     "build": "gulp",
     "watch": "gulp watch",
