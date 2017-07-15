@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
+import stripAnsi from 'strip-ansi';
 
 import isUndefined from 'lodash/isUndefined';
 
@@ -12,7 +13,10 @@ import { parse } from './parser';
 import { execVisitor } from './visitor';
 import { version } from '../package.json';
 
-let timeStampFormat = 'HH:mm:ss';
+const options = {
+  stripAnsi: false,
+  timeStampFormat: 'HH:mm:ss'
+};
 
 export function run () {
   const context = createContext();
@@ -21,11 +25,15 @@ export function run () {
   program
     .version(version)
     .usage('[options] <file> [arguments]')
+    .option('-s, --strip-ansi', 'Strip ANSI escape codes from process outputs')
     .option('-t, --time-stamp-format [format]', 'Specify format of timestamps')
     .parse(process.argv);
 
+  if (program.stripAnsi) {
+    options.stripAnsi = true;
+  }
   if (!isUndefined(program.timeStampFormat)) {
-    timeStampFormat = program.timeStampFormat;
+    options.timeStampFormat = program.timeStampFormat;
   }
 
   // TODO: Add support for reading input from stdin.
@@ -88,8 +96,11 @@ function log (input, stream, color = null) {
   text.split(/\r?\n/).forEach(line => {
     let timeStamp = '';
 
-    if (timeStampFormat) {
-      timeStamp = `[${chalk.grey(moment().format(timeStampFormat))}] `;
+    if (options.timeStampFormat) {
+      timeStamp = `[${chalk.grey(moment().format(options.timeStampFormat))}] `;
+    }
+    if (options.stripAnsi) {
+      line = stripAnsi(line);
     }
     if (color) {
       line = color(line);
