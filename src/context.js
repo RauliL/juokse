@@ -1,3 +1,5 @@
+import EventEmitter from 'events';
+
 import builtinCommands from './builtins';
 import path from 'path';
 import through from 'through';
@@ -12,8 +14,10 @@ import { spawn } from 'child_process';
 /**
  * Class which represents context of an script execution.
  */
-export default class Context {
+export default class Context extends EventEmitter {
   constructor () {
+    super();
+
     this.stdout = through();
     this.stderr = through();
     this.stdin = through();
