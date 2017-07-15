@@ -5,8 +5,12 @@ import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
 
+import isUndefined from 'lodash/isUndefined';
+
 import { parse } from './parser';
 import { execVisitor } from './visitor';
+
+let timeStampFormat = 'HH:mm:ss';
 
 export function run () {
   const context = createContext();
@@ -15,7 +19,12 @@ export function run () {
   program
     .version('0.0.2')
     .usage('[options] <file> [arguments]')
+    .option('-t, --time-stamp-format [format]', 'Specify format of timestamps')
     .parse(process.argv);
+
+  if (!isUndefined(program.timeStampFormat)) {
+    timeStampFormat = program.timeStampFormat;
+  }
 
   // TODO: Add support for reading input from stdin.
   if (!program.args.length || program.args[0] === '-') {
@@ -77,11 +86,14 @@ function log (input, stream, color = null) {
   }
 
   text.split(/\r?\n/).forEach(line => {
-    const timeStamp = `[${chalk.grey(moment().format('HH:mm:ss'))}]`;
+    let timeStamp = '';
 
+    if (timeStampFormat) {
+      timeStamp = `[${chalk.grey(moment().format(timeStampFormat))}] `;
+    }
     if (color) {
       line = color(line);
     }
-    stream.write(`${timeStamp} ${line.replace(/\r?\n$/, '')}\n`);
+    stream.write(`${timeStamp}${line.replace(/\r?\n$/, '')}\n`);
   });
 }
