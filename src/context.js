@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 
 import builtinCommands from './builtins';
+import glob from 'glob';
 import path from 'path';
 import through from 'through';
 
@@ -133,9 +134,39 @@ export default class Context extends EventEmitter {
   }
 
   /**
+   * Expands wildcards from given input string and stores results into given
+   * array of strings.
+   *
+   * If the given input string contains wildcards that do not provide any
+   * results, an exception will be thrown.
+   *
+   * @param {string} input Input to string to expand wildcards from.
+   * @param {array} output Output array where the results of the wildcard
+   *                       expansion are inserted into.
+   */
+  expand (input, output) {
+    // TODO: Expand variables.
+
+    if (glob.hasMagic(input)) {
+      const results = glob.sync(input, { cwd: this.cwd });
+
+      if (!results.length) {
+        throw new Error(`No matches for wildcard '${input}'`);
+      }
+      output.push(...results);
+    } else {
+      output.push(input);
+    }
+  }
+
+  /**
    * Executes given executable or builtin command with given command line
    * arguments. The method will launch the builtin command or executable found
    * from the file system and return it's exit status in a promise.
+   *
+   * Note that wildcards contained in the given arguments are expanded before
+   * the command execution and wildcards that do not provide any results result
+   * in error.
    *
    * @param {string} executable Name of the executable or builtin command to
    *                            execute with given command line arguments.
@@ -148,12 +179,19 @@ export default class Context extends EventEmitter {
    */
   execute (executable, ...args) {
     const resolvedExecutable = this.resolveExecutable(executable);
+    const expandedArgs = [];
+
+    for (let arg of args) {
+      try {
+        this.expand(arg, expandedArgs);
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    }
 
     if (!resolvedExecutable) {
       return Promise.reject(new Error(`No such file or directory: ${executable}`));
     }
-
-    // TODO: Expand variable names and wildcards from arguments.
 
     this.emit('process start', { executable, args });
 
@@ -162,7 +200,7 @@ export default class Context extends EventEmitter {
         let status;
 
         try {
-          status = resolvedExecutable(this, executable, ...args);
+          status = resolvedExecutable(this, executable, ...expandedArgs);
         } catch (err) {
           reject(err);
           return;
@@ -175,7 +213,7 @@ export default class Context extends EventEmitter {
     }
 
     return new Promise((resolve, reject) => {
-      const childProcess = spawn(resolvedExecutable, args, {
+      const childProcess = spawn(resolvedExecutable, expandedArgs, {
         cwd: this.cwd,
         env: this.environment,
         argv0: executable,
