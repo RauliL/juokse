@@ -10,6 +10,7 @@ import isUndefined from 'lodash/isUndefined';
 import { EXIT_STATUS_ERROR } from './status';
 import { parse } from './parser';
 import { execVisitor } from './visitor';
+import { version } from '../package.json';
 
 let timeStampFormat = 'HH:mm:ss';
 
@@ -18,7 +19,7 @@ export function run () {
   const program = require('commander');
 
   program
-    .version('0.0.2')
+    .version(version)
     .usage('[options] <file> [arguments]')
     .option('-t, --time-stamp-format [format]', 'Specify format of timestamps')
     .parse(process.argv);
