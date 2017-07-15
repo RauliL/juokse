@@ -61,7 +61,10 @@ function execNodes (context, nodes) {
     const node = nodes[index++];
 
     execVisitor[node.type](context, node)
-      .catch(err => { throw err; })
+      .catch(err => {
+        console.error(err);
+        process.exit(1);
+      })
       .then(({ status }) => {
         if (status !== 0) {
           log(`Process exited with status ${status}`, process.stdout, chalk.red);
