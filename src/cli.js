@@ -69,13 +69,7 @@ function execNodes (context, nodes) {
         console.error(err);
         process.exit(EXIT_STATUS_ERROR);
       })
-      .then(({ status }) => {
-        if (status !== 0) {
-          log(`Process exited with status ${status}`, process.stdout, chalk.red);
-          process.exit(EXIT_STATUS_ERROR);
-        }
-        execNextNode();
-      });
+      .then(execNextNode);
   };
 
   if (nodes.length) {
