@@ -32,6 +32,10 @@ function createContext () {
   // Copy environment variables from system into context.
   Object.assign(instance.environment, process.env);
 
+  instance.on('process start', ({ executable, args }) => {
+    log(`${[executable, ...args].join(' ')}`, process.stdout, chalk.green);
+  });
+
   instance.stdout.on('data', data => log(data, process.stdout));
   instance.stderr.on('data', data => log(data, process.stderr, chalk.red));
 
