@@ -23,6 +23,7 @@ export default class Context extends EventEmitter {
     this.stdin = through();
 
     this.environment = {};
+    this.variables = {};
   }
 
   /**
@@ -167,6 +168,7 @@ export default class Context extends EventEmitter {
           return;
         }
 
+        this.variables['?'] = `${status}`;
         this.emit('process finish', { executable, args, status });
         resolve({ status });
       });
@@ -183,12 +185,8 @@ export default class Context extends EventEmitter {
       childProcess.on('error', reject);
 
       childProcess.on('close', (status, signal) => {
-        this.emit('process finish', {
-          executable,
-          args,
-          status,
-          signal
-        });
+        this.variables['?'] = `${status}`;
+        this.emit('process finish', { executable, args, status, signal });
         resolve({
           pid: childProcess.pid,
           status,
