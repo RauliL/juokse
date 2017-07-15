@@ -56,6 +56,7 @@ function execNodes (context, nodes) {
       .then(({ status }) => {
         if (status !== 0) {
           log(`Process exited with status ${status}`, process.stdout, chalk.red);
+          process.exit(1);
           return;
         }
         execNextNode();
