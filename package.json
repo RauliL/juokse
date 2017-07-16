@@ -19,7 +19,8 @@
   "scripts": {
     "build": "gulp",
     "watch": "gulp watch",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "test": "mocha"
   },
   "files": [
     "bin/",
@@ -48,6 +49,8 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-pegjs": "^0.1.0",
-    "gulp-plumber": "^1.1.0"
+    "gulp-plumber": "^1.1.0",
+    "mocha": "^3.4.2",
+    "should": "^11.2.1"
   }
 }
