@@ -16,6 +16,9 @@
     "shell",
     "script"
   ],
+  "engines": {
+    "node": ">=4.8.4"
+  },
   "scripts": {
     "build": "gulp",
     "watch": "gulp watch",
