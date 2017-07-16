@@ -14,6 +14,7 @@ gulp.task('build', () => {
 
 gulp.task('generate-parser', () => {
   return gulp.src('./src/parser.pegjs')
+    .pipe(plumber())
     .pipe(pegjs({ format: 'commonjs' }))
     .pipe(gulp.dest('./lib'));
 });
