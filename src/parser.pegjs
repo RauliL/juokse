@@ -47,7 +47,7 @@ Start
   }
 
 WhiteSpace
-  = [ \t]+
+  = [ \t]+ ('\\' LineTerminator+ [ \t]*)?
 
 LineTerminator
   = '\n'
@@ -57,7 +57,7 @@ LineTerminator
   / '\u2029'
 
 Word
-  = id:[^ \t\r\n\u2028\u2029;:]+ WhiteSpace? {
+  = id:[^ \t\r\n\u2028\u2029;:\\]+ WhiteSpace? {
       return id.join('');
     }
 
