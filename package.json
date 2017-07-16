@@ -23,7 +23,8 @@
     "build": "gulp",
     "watch": "gulp watch",
     "prepublish": "npm run build",
-    "test": "mocha"
+    "test": "mocha",
+    "coverage": "istanbul cover node_modules/.bin/_mocha -- -- test/*"
   },
   "files": [
     "bin/",
