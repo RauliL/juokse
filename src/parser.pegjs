@@ -42,7 +42,7 @@
 }
 
 Start
-  = first:Line tail:(LineTerminator Line)* LineTerminator? {
+  = LineTerminator* first:Line tail:(LineTerminator+ Line)* LineTerminator* {
     return start(first, tail);
   }
 
@@ -57,7 +57,7 @@ LineTerminator
   / '\u2029'
 
 Word
-  = id:[^ \t\r\n\u2028\u2029;:\\]+ WhiteSpace? {
+  = id:[^ \t\r\n\u2028\u2029;:\\#]+ WhiteSpace? {
       return id.join('');
     }
 
