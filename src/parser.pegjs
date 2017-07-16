@@ -57,7 +57,7 @@ LineTerminator
   / '\u2029'
 
 Word
-  = id:[^ \t\r\n\u2028\u2029:]+ {
+  = id:[^ \t\r\n\u2028\u2029:]+ WhiteSpace? {
       return id.join('');
     }
 
@@ -76,15 +76,10 @@ Command
 
 // TODO: Add support for I/O redirection and '&&' and '||' operators.
 SimpleCommand
-  = executable:Word args:SimpleCommandArgument* {
+  = executable:Word args:Word* {
     return {
       type: 'SimpleCommand',
       executable: executable,
       args: args
     };
-  }
-
-SimpleCommandArgument
-  = WhiteSpace arg:Word {
-    return arg;
   }
