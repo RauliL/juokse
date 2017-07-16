@@ -74,7 +74,7 @@ function execNodes (context, nodes) {
 
     execVisitor[node.type](context, node)
       .catch(err => {
-        console.error(err);
+        log(err, process.stderr, chalk.red);
         process.exit(EXIT_STATUS_ERROR);
       })
       .then(execNextNode);
