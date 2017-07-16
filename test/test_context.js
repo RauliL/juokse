@@ -1,21 +1,19 @@
-'use strict';
+const Context = require('../lib/context').default;
 
-var Context = require('../lib/context').default;
+const os = require('os');
+const path = require('path');
+const should = require('should');
 
-var os = require('os');
-var path = require('path');
-var should = require('should');
-
-describe('Context', function () {
-  describe('#cwd', function () {
-    it('should return current working directory by default', function () {
+describe('Context', () => {
+  describe('#cwd', () => {
+    it('should return current working directory by default', () => {
       should.strictEqual(new Context().cwd, process.cwd());
     });
 
-    it('should allow changing of current working directory', function () {
-      var context = new Context();
-      var libDir = path.join(process.cwd(), 'lib');
-      var rootDir = (os.platform === 'win32') ? process.cwd().split(path.sep)[0] : '/';
+    it('should allow changing of current working directory', () => {
+      const context = new Context();
+      const libDir = path.join(process.cwd(), 'lib');
+      const rootDir = (os.platform === 'win32') ? process.cwd().split(path.sep)[0] : '/';
 
       context.cwd = libDir;
       should.strictEqual(context.cwd, libDir);
@@ -24,20 +22,20 @@ describe('Context', function () {
       should.strictEqual(context.cwd, rootDir);
     });
 
-    it('should throw error when trying to set non-existing directory as cwd', function () {
-      should.throws(function () {
+    it('should throw error when trying to set non-existing directory as cwd', () => {
+      should.throws(() => {
         new Context().cwd = path.join(process.cwd(), 'non-existent');
       });
     });
   });
 
-  describe('#path', function () {
-    it('should return empty path by default', function () {
+  describe('#path', () => {
+    it('should return empty path by default', () => {
       (new Context().path).should.be.empty();
     });
 
-    it('should allow array as new path', function () {
-      var context = new Context();
+    it('should allow array as new path', () => {
+      const context = new Context();
 
       context.path = [];
       should.strictEqual(context.environment.PATH, '');
@@ -49,8 +47,8 @@ describe('Context', function () {
       should.strictEqual(context.environment.PATH, 'foo' + path.delimiter + 'bar');
     });
 
-    it('should allow string as new path', function () {
-      var context = new Context();
+    it('should allow string as new path', () => {
+      const context = new Context();
 
       context.path = '';
       should.strictEqual(context.environment.PATH, '');
@@ -63,33 +61,33 @@ describe('Context', function () {
     });
   });
 
-  describe('#resolveExecutable()', function () {
-    it('should resolve no executables by default', function () {
+  describe('#resolveExecutable()', () => {
+    it('should resolve no executables by default', () => {
       should.not.exist(new Context().resolveExecutable('ls'));
     });
 
-    it('should resolve executables', function () {
-      var context = new Context();
-      var binDir = path.join(process.cwd(), 'bin');
+    it('should resolve executables', () => {
+      const context = new Context();
+      const binDir = path.join(process.cwd(), 'bin');
 
       context.path = binDir;
       should.strictEqual(context.resolveExecutable('juokse'), path.join(binDir, 'juokse'));
     });
   });
 
-  describe('#expand()', function () {
-    var context = new Context();
+  describe('#expand()', () => {
+    const context = new Context();
 
-    it('should not expand non-wildcards', function () {
-      var output = [];
+    it('should not expand non-wildcards', () => {
+      const output = [];
 
       context.expand('foo', output);
       should.strictEqual(output.length, 1);
       should.strictEqual(output[0], 'foo');
     });
 
-    it('should expand wildcards', function () {
-      var output = [];
+    it('should expand wildcards', () => {
+      const output = [];
 
       context.expand('./lib/c*.js', output);
       should.exist(output);
@@ -97,15 +95,15 @@ describe('Context', function () {
       should.ok(output, output.indexOf('./lib/context.js') >= 0);
     });
 
-    it('should throw error for non-matching wildcard', function () {
-      should.throws(function () {
+    it('should throw error for non-matching wildcard', () => {
+      should.throws(() => {
         context.expand('x*x*x', []);
       });
     });
   });
 
-  describe('#execute()', function () {
-    it('should reject non-existing executables', function () {
+  describe('#execute()', () => {
+    it('should reject non-existing executables', () => {
       new Context().execute('non-existent').should.be.rejected();
     });
   });
