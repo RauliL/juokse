@@ -49,10 +49,12 @@
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.24.1",
+    "coveralls": "^2.13.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-pegjs": "^0.1.0",
     "gulp-plumber": "^1.1.0",
+    "istanbul": "^0.4.5",
     "mocha": "^3.4.2",
     "should": "^11.2.1"
   }
