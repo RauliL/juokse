@@ -57,7 +57,7 @@ LineTerminator
   / '\u2029'
 
 Word
-  = id:[^ \t\r\n\u2028\u2029:]+ WhiteSpace? {
+  = id:[^ \t\r\n\u2028\u2029;:]+ WhiteSpace? {
       return id.join('');
     }
 
@@ -72,7 +72,16 @@ Indentation
     }
 
 Command
-  = SimpleCommand
+  = SimpleCommandList
+  / SimpleCommand
+
+SimpleCommandList
+  = initial:SimpleCommand additional:(';' WhiteSpace? SimpleCommand)+ {
+    return {
+      type: 'Block',
+      body: [initial].concat(additional.map(ary => ary[2]))
+    };
+  }
 
 // TODO: Add support for I/O redirection and '&&' and '||' operators.
 SimpleCommand

@@ -21,5 +21,12 @@ export const execVisitor = {
 
         return Promise.resolve(result);
       });
+  },
+
+  Block (context, node) {
+    return node.body.reduce(
+      (promise, child) => promise.then(() => execVisitor[child.type](context, child)),
+      Promise.resolve()
+    );
   }
 };
