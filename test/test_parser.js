@@ -2,6 +2,12 @@ const parse = require('../lib/parser').parse;
 const should = require('should');
 
 describe('Parser', () => {
+  it('should throw exception on syntax error', () => {
+    should.throws(() => {
+      parse(';foo;');
+    });
+  });
+
   it('should be able to parse simple commands', () => {
     const nodes = parse('foo ');
 
@@ -39,5 +45,15 @@ describe('Parser', () => {
     nodes[0].body[2].executable.should.be.equal('baz');
     nodes[0].body[2].args.should.have.length(1);
     nodes[0].body[2].args[0].should.be.equal('quux');
+  });
+
+  it('should be able to parse commands separated with newline', () => {
+    const nodes = parse('foo\nbar\r\nbaz quux');
+
+    nodes.should.have.length(3);
+    nodes.forEach(node => {
+      node.should.have.enumerable('type');
+      node.type.should.be.equal('SimpleCommand');
+    });
   });
 });
