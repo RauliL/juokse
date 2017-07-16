@@ -42,9 +42,12 @@
 }
 
 Start
-  = LineTerminator* first:Line tail:(LineTerminator+ Line)* LineTerminator* {
+  = EndOfLine* first:Line tail:(EndOfLine+ Line)* EndOfLine* {
     return start(first, tail);
   }
+
+SourceCharacter
+  = .
 
 WhiteSpace
   = [ \t]+ ('\\' LineTerminator+ [ \t]*)?
@@ -55,6 +58,13 @@ LineTerminator
   / '\r'
   / '\u2028'
   / '\u2029'
+
+EndOfLine
+  = LineTerminator+
+  / SingleLineComment+
+
+SingleLineComment
+  = '#' (!LineTerminator SourceCharacter)*
 
 Word
   = id:[^ \t\r\n\u2028\u2029;:\\#]+ WhiteSpace? {
