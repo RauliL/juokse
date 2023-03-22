@@ -1,7 +1,7 @@
 import chalk, { ChalkFunction } from "chalk";
 import { program } from "commander";
+import { format } from "date-fns";
 import fs from "fs";
-import moment from "moment";
 import stripAnsi from "strip-ansi";
 
 import { compile } from "./compiler";
@@ -109,7 +109,9 @@ function log(
     let timeStamp = "";
 
     if (options.timeStampFormat) {
-      timeStamp = `[${chalk.grey(moment().format(options.timeStampFormat))}] `;
+      timeStamp = `[${chalk.grey(
+        format(Date.now(), options.timeStampFormat)
+      )}] `;
     }
     if (options.stripAnsi) {
       line = stripAnsi(line);
