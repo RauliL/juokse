@@ -1,11 +1,8 @@
-/**
- * Exit statuses for various situations.
- */
-module.exports = {
+export enum ExitStatus {
   /** Status code used for normal exit in a command. */
-  EXIT_STATUS_OK: 0,
+  OK = 0,
   /** Status code used for failure exit in a command. */
-  EXIT_STATUS_ERROR: 1,
+  ERROR = 1,
   /** Status code used for invalid arguments given to a command. */
-  EXIT_STATUS_INVALID_ARGS: 121
-};
+  INVALID_ARGS = 121,
+}
