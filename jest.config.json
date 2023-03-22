@@ -1,3 +1,4 @@
 {
+  "collectCoverageFrom": ["<rootDir>/src/**/*.ts"],
   "preset": "ts-jest"
 }
