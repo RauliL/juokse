@@ -2,6 +2,7 @@ import os from "os";
 import path from "path";
 
 import { Context } from "./context";
+import { ExitStatus } from "./status";
 
 describe("class Context", () => {
   describe("#cwd", () => {
@@ -26,6 +27,29 @@ describe("class Context", () => {
       expect(() => {
         new Context().cwd = path.join(process.cwd(), "non-existent");
       }).toThrow();
+    });
+
+    it("should treat '-' as previous working directory stored in $OLDPWD", () => {
+      const context = new Context();
+      const cwd = process.cwd();
+      const binDir = path.join(cwd, "bin");
+      const libDir = path.join(cwd, "lib");
+
+      context.cwd = binDir;
+      context.cwd = libDir;
+      context.cwd = "-";
+
+      expect(context.cwd).toEqual(binDir);
+    });
+
+    it("should do nothing when set to '-' and $OLDPWD is not set", () => {
+      const context = new Context();
+      const libDir = path.join(process.cwd(), "lib");
+
+      context.environment.PWD = libDir;
+      context.cwd = "-";
+
+      expect(context.cwd).toEqual(libDir);
     });
   });
 
@@ -62,8 +86,14 @@ describe("class Context", () => {
   });
 
   describe("#resolveExecutable()", () => {
-    it("should resolve no executables by default", () => {
+    it("should resolve no non-absolute executables by default", () => {
       expect(new Context().resolveExecutable("ls")).toBeNull();
+    });
+
+    it("should resolve absolute executables", () => {
+      const exe = path.join(process.cwd(), "bin", "juokse");
+
+      expect(new Context().resolveExecutable(exe)).toEqual(exe);
     });
 
     it("should resolve builtin commands", () => {
@@ -86,5 +116,10 @@ describe("class Context", () => {
       expect(new Context().execute("non-existent")).rejects.toBeInstanceOf(
         Error
       ));
+
+    it("should prioritize builtin commands over commands from file system", () =>
+      expect(new Context().execute("false")).resolves.toEqual({
+        status: ExitStatus.ERROR,
+      }));
   });
 });
