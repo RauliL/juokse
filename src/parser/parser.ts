@@ -14,7 +14,7 @@ import {
 import { JuokseError } from "../error";
 import { State } from "./state";
 
-const parseBlockStatement = (
+export const parseBlockStatement = (
   state: State,
   position: Position
 ): BlockStatement => {
@@ -39,7 +39,7 @@ const parseBlockStatement = (
   };
 };
 
-const parseForStatement = (state: State): ForStatement => {
+export const parseForStatement = (state: State): ForStatement => {
   const { position } = state.read("KeywordFor");
   const variable = state.read<Word>("Word").text;
   const subjects: Word[] = [];
@@ -64,7 +64,7 @@ const parseForStatement = (state: State): ForStatement => {
   };
 };
 
-const parseIfStatement = (state: State): IfStatement => {
+export const parseIfStatement = (state: State): IfStatement => {
   const { position } = state.read("KeywordIf");
   const test = parseCommandStatement(state);
 
@@ -91,7 +91,7 @@ const parseIfStatement = (state: State): IfStatement => {
   };
 };
 
-const parseWhileStatement = (state: State): WhileStatement => {
+export const parseWhileStatement = (state: State): WhileStatement => {
   const { position } = state.read("KeywordWhile");
   const test = parseCommandStatement(state);
 
@@ -105,7 +105,7 @@ const parseWhileStatement = (state: State): WhileStatement => {
   };
 };
 
-const parseCommandStatement = (state: State): CommandStatement => {
+export const parseCommandStatement = (state: State): CommandStatement => {
   const command = state.readWord();
   const args: Word[] = [];
 
@@ -121,12 +121,12 @@ const parseCommandStatement = (state: State): CommandStatement => {
   };
 };
 
-const parsePassStatement = (state: State): PassStatement => ({
+export const parsePassStatement = (state: State): PassStatement => ({
   position: state.read("KeywordPass").position,
   type: "Pass",
 });
 
-const parseAssignmentStatement = (state: State): AssignmentStatement => {
+export const parseAssignmentStatement = (state: State): AssignmentStatement => {
   const { position, text: variable } = state.readWord();
 
   // Skip "=".
@@ -140,7 +140,7 @@ const parseAssignmentStatement = (state: State): AssignmentStatement => {
   };
 };
 
-const parseSimpleStatement = (state: State): Statement => {
+export const parseSimpleStatement = (state: State): Statement => {
   if (state.eof()) {
     throw new JuokseError(
       "Unexpected end of input; Missing statement.",
@@ -162,7 +162,7 @@ const parseSimpleStatement = (state: State): Statement => {
   return parseCommandStatement(state);
 };
 
-const parseStatementList = (state: State, output: Statement[]): void => {
+export const parseStatementList = (state: State, output: Statement[]): void => {
   output.push(parseSimpleStatement(state));
   while (state.peekRead(";")) {
     if (state.eof() || state.peek("NewLine")) {
@@ -172,7 +172,7 @@ const parseStatementList = (state: State, output: Statement[]): void => {
   }
 };
 
-const parseStatement = (state: State, output: Statement[]): void => {
+export const parseStatement = (state: State, output: Statement[]): void => {
   if (state.eof()) {
     throw new JuokseError(
       "Unexpected end of input; Missing statement.",
