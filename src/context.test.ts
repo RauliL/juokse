@@ -6,9 +6,8 @@ import { ExitStatus } from "./status";
 
 describe("class Context", () => {
   describe("#cwd", () => {
-    it("should return current working directory by default", () => {
-      expect(new Context().cwd).toEqual(process.cwd());
-    });
+    it("should return current working directory by default", () =>
+      expect(new Context().cwd).toEqual(process.cwd()));
 
     it("should allow changing of current working directory", () => {
       const context = new Context();
@@ -23,11 +22,10 @@ describe("class Context", () => {
       expect(context.cwd).toEqual(rootDir);
     });
 
-    it("should throw error when trying to set non-existing directory as cwd", () => {
+    it("should throw error when trying to set non-existing directory as cwd", () =>
       expect(() => {
         new Context().cwd = path.join(process.cwd(), "non-existent");
-      }).toThrow();
-    });
+      }).toThrow());
 
     it("should treat '-' as previous working directory stored in $OLDPWD", () => {
       const context = new Context();
@@ -53,10 +51,36 @@ describe("class Context", () => {
     });
   });
 
-  describe("#path", () => {
-    it("should return empty path by default", () => {
-      expect(new Context().path).toHaveLength(0);
+  describe("#home", () => {
+    it("should return environment variable $HOME by default", () => {
+      const context = new Context();
+
+      context.environment.HOME = "/test";
+
+      expect(context.home).toEqual("/test");
     });
+
+    it("should fallback to user's real home directory", () =>
+      expect(new Context().home).toEqual(os.homedir()));
+
+    it("should allow changing home directory", () => {
+      const context = new Context();
+      const libDir = path.join(process.cwd(), "lib");
+
+      context.home = libDir;
+
+      expect(context.environment).toHaveProperty("HOME", libDir);
+    });
+
+    it("should throw error when trying to set non-existing directory as home directory", () =>
+      expect(() => {
+        new Context().home = path.join(process.cwd(), "non-existent");
+      }).toThrow());
+  });
+
+  describe("#path", () => {
+    it("should return empty path by default", () =>
+      expect(new Context().path).toHaveLength(0));
 
     it("should allow array as new path", () => {
       const context = new Context();
@@ -85,10 +109,9 @@ describe("class Context", () => {
     });
   });
 
-  describe("#resolveExecutable()", () => {
-    it("should resolve no non-absolute executables by default", () => {
-      expect(new Context().resolveExecutable("ls")).toBeNull();
-    });
+  describe("resolveExecutable()", () => {
+    it("should resolve no non-absolute executables by default", () =>
+      expect(new Context().resolveExecutable("ls")).toBeNull());
 
     it("should resolve absolute executables", () => {
       const exe = path.join(process.cwd(), "bin", "juokse");
@@ -96,9 +119,8 @@ describe("class Context", () => {
       expect(new Context().resolveExecutable(exe)).toEqual(exe);
     });
 
-    it("should resolve builtin commands", () => {
-      expect(typeof new Context().resolveExecutable("!")).toBe("function");
-    });
+    it("should resolve builtin commands", () =>
+      expect(typeof new Context().resolveExecutable("!")).toBe("function"));
 
     it("should resolve executables", () => {
       const context = new Context();
@@ -111,7 +133,7 @@ describe("class Context", () => {
     });
   });
 
-  describe("#execute()", () => {
+  describe("execute()", () => {
     it("should reject non-existing executables", () =>
       expect(new Context().execute("non-existent")).rejects.toBeInstanceOf(
         Error
