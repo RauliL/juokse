@@ -63,6 +63,15 @@ describe("expandWord()", () => {
       })
     ).resolves.toEqual([""]));
 
+  it("should replace multiple variables inside double quoted string", () =>
+    expect(
+      expandWord(context, {
+        position: { filename: "test", line: 1, column: 1 },
+        type: "DoubleQuote",
+        text: "${foo}test${foo}",
+      })
+    ).resolves.toEqual(["bartestbar"]));
+
   it("should expand globs inside simple words", () =>
     expect(
       expandWord(context, {

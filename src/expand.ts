@@ -4,26 +4,18 @@ import { visitWord, Word, WordVisitor } from "./ast";
 import { Context } from "./context";
 import { JuokseError } from "./error";
 
+const VARIABLE_PATTERN = /\$(\{[^}]+\}|\S+)/g;
+
 // TODO: Add support for tilde expansion.
 
-const expandVariables = (context: Context, input: string): string => {
-  const pattern = /\$(\{[^}]+\}|\S+)/gm;
-  let array: RegExpExecArray | null;
-
-  while ((array = pattern.exec(input)) != null) {
-    let name = array[1];
-
-    if (/^\{.+\}$/.test(name)) {
+const expandVariables = (context: Context, input: string): string =>
+  input.replace(VARIABLE_PATTERN, (match: string, name: string) => {
+    if (/^\{.+}$/.test(name)) {
       name = name.substring(1, name.length - 1);
     }
-    input =
-      input.substring(0, array.index) +
-      (context.variables[name] ?? context.environment[name] ?? "") +
-      input.substring(array.index + array[0].length);
-  }
 
-  return input;
-};
+    return context.variables[name] ?? context.environment[name] ?? "";
+  });
 
 const expandVisitor: WordVisitor<Promise<string[]>, Context> = {
   async visitDoubleQuote(word: Word, context: Context): Promise<string[]> {
