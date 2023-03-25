@@ -21,7 +21,7 @@ import {
 import { expandWord } from "./expand";
 import { ExitStatus } from "./status";
 
-const executeVisitor: StatementVisitor<Promise<ExecutionResult>, Context> = {
+export const visitor: StatementVisitor<Promise<ExecutionResult>, Context> = {
   async visitAssignment(
     statement: AssignmentStatement,
     context: Context
@@ -39,7 +39,7 @@ const executeVisitor: StatementVisitor<Promise<ExecutionResult>, Context> = {
   ): Promise<ExecutionResult> {
     return statement.body.reduce(
       (promise, child) =>
-        promise.then(() => visitStatement(executeVisitor, child, context)),
+        promise.then(() => visitStatement(visitor, child, context)),
       Promise.resolve<ExecutionResult>({ status: ExitStatus.OK })
     );
   },
@@ -106,9 +106,9 @@ const executeVisitor: StatementVisitor<Promise<ExecutionResult>, Context> = {
     const result = await evaluateCommand(context, statement.test);
 
     if (result.status === ExitStatus.OK) {
-      return visitStatement(executeVisitor, statement.then, context);
+      return visitStatement(visitor, statement.then, context);
     } else if (statement.else) {
-      return visitStatement(executeVisitor, statement.else, context);
+      return visitStatement(visitor, statement.else, context);
     }
 
     return { status: ExitStatus.OK };
@@ -146,7 +146,7 @@ const evaluateCommand = (
   context: Context,
   command: CommandStatement
 ): Promise<ExecutionResult> =>
-  executeVisitor
+  visitor
     .visitCommand(command, context)
     .catch((error) =>
       error instanceof CommandExitError
@@ -159,7 +159,7 @@ const executeLoopBody = async (
   statement: Statement
 ): Promise<"break" | "continue" | undefined> => {
   try {
-    await visitStatement(executeVisitor, statement, context);
+    await visitStatement(visitor, statement, context);
   } catch (err) {
     if (err instanceof BreakError) {
       if (err.n > 1) {
@@ -189,7 +189,7 @@ export const executeScript = (
     const statement = script[index++];
 
     if (statement) {
-      visitStatement(executeVisitor, statement, context)
+      visitStatement(visitor, statement, context)
         .catch(onError)
         .then(executeNextStatement);
     }
