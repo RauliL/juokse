@@ -5,7 +5,12 @@ import {
   Position,
 } from "./ast";
 import { Context } from "./context";
-import { CommandExitError, JuokseError } from "./error";
+import {
+  BreakError,
+  CommandExitError,
+  ContinueError,
+  JuokseError,
+} from "./error";
 import { visitor } from "./execute";
 import { ExitStatus } from "./status";
 
@@ -261,6 +266,76 @@ describe("visitor", () => {
           expect(context).toHaveProperty(["variables", "test"], "foo");
         });
     });
+
+    it('should throw `BreakError` when nested "break" statement is countered', () =>
+      expect(
+        visitor.visitFor(
+          {
+            position,
+            type: "For",
+            variable: "i",
+            subjects: [
+              {
+                position,
+                type: "Word",
+                text: "foo",
+              },
+            ],
+            body: {
+              position,
+              type: "Command",
+              command: {
+                position,
+                type: "Word",
+                text: "break",
+              },
+              args: [
+                {
+                  position,
+                  type: "Word",
+                  text: "2",
+                },
+              ],
+            } as CommandStatement,
+          },
+          new Context()
+        )
+      ).rejects.toBeInstanceOf(BreakError));
+
+    it('should throw `ContinueError` when nested "continue" statement is countered', () =>
+      expect(
+        visitor.visitFor(
+          {
+            position,
+            type: "For",
+            variable: "i",
+            subjects: [
+              {
+                position,
+                type: "Word",
+                text: "foo",
+              },
+            ],
+            body: {
+              position,
+              type: "Command",
+              command: {
+                position,
+                type: "Word",
+                text: "continue",
+              },
+              args: [
+                {
+                  position,
+                  type: "Word",
+                  text: "2",
+                },
+              ],
+            } as CommandStatement,
+          },
+          new Context()
+        )
+      ).rejects.toBeInstanceOf(ContinueError));
   });
 
   describe("visitIf()", () => {
@@ -434,5 +509,51 @@ describe("visitor", () => {
           expect(context).toHaveProperty(["variables", "test"], "test");
         });
     });
+
+    it('should throw `BreakError` when nested "break" statement is encountered', () =>
+      expect(
+        visitor.visitWhile(
+          {
+            position,
+            type: "While",
+            test: {
+              position,
+              type: "Command",
+              command: { position, type: "Word", text: "true" },
+              args: [],
+            },
+            body: {
+              position,
+              type: "Command",
+              command: { position, type: "Word", text: "break" },
+              args: [{ position, type: "Word", text: "2" }],
+            } as CommandStatement,
+          },
+          new Context()
+        )
+      ).rejects.toBeInstanceOf(BreakError));
+
+    it('should throw `ContinueError` when nested "continue" statement is encountered', () =>
+      expect(
+        visitor.visitWhile(
+          {
+            position,
+            type: "While",
+            test: {
+              position,
+              type: "Command",
+              command: { position, type: "Word", text: "true" },
+              args: [],
+            },
+            body: {
+              position,
+              type: "Command",
+              command: { position, type: "Word", text: "continue" },
+              args: [{ position, type: "Word", text: "2" }],
+            } as CommandStatement,
+          },
+          new Context()
+        )
+      ).rejects.toBeInstanceOf(ContinueError));
   });
 });
