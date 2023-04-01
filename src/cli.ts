@@ -121,14 +121,9 @@ const execute = (
   filename: string
 ) => {
   compile(filename, source)
-    .then((script) =>
-      executeScript(context, script, (err) => {
-        log(options, err, process.stderr, chalk.red);
-        process.exit(ExitStatus.ERROR);
-      })
-    )
+    .then((script) => executeScript(context, script))
     .catch((err) => {
-      process.stderr.write(`${err}\n`);
+      log(options, err, process.stderr, chalk.red);
       process.exit(ExitStatus.ERROR);
     });
 };

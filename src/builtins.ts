@@ -1,5 +1,9 @@
+import fs from "fs";
+
+import { compile } from "./compiler";
 import { Context } from "./context";
 import { BreakError, ContinueError } from "./error";
+import { executeScript } from "./execute";
 import { ExitStatus } from "./status";
 
 export type BuiltinCommandCallback = (
@@ -134,13 +138,25 @@ const builtinCommandPwd = builtinCommand(0, 0, (context) => {
   return Promise.resolve(ExitStatus.OK);
 });
 
+/**
+ * Executes another script.
+ */
+const builtinCommandSource = builtinCommand(1, 1, async (context, filename) =>
+  executeScript(
+    context,
+    await compile(filename, fs.readFileSync(filename, "utf-8"))
+  ).then(() => ExitStatus.OK)
+);
+
 export const builtinCommandMapping: Record<string, BuiltinCommandCallback> = {
   "!": builtinCommandNot,
+  ".": builtinCommandSource,
   break: builtinCommandBreak,
   cd: builtinCommandCd,
   continue: builtinCommandContinue,
   exit: builtinCommandExit,
   false: builtinCommand(0, 0, () => Promise.resolve(ExitStatus.ERROR)),
   pwd: builtinCommandPwd,
+  source: builtinCommandSource,
   true: builtinCommand(0, 0, () => Promise.resolve(ExitStatus.OK)),
 };
