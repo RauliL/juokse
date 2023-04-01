@@ -1,4 +1,5 @@
 import { globSync, hasMagic } from "glob";
+import { trimEnd } from "lodash";
 import { PassThrough } from "stream";
 
 import { visitWord, Word, WordVisitor } from "./ast";
@@ -40,7 +41,7 @@ const expandVisitor: WordVisitor<Promise<string[]>, Context> = {
       throw subshellError;
     }
 
-    return [buffer];
+    return [trimEnd(buffer)];
   },
 
   async visitDoubleQuote(word: Word, context: Context): Promise<string[]> {
