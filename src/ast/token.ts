@@ -1,7 +1,7 @@
 import { JuokseError } from "../error";
 import { Position } from "./position";
 
-export type WordType = "DoubleQuote" | "SingleQuote" | "Word";
+export type WordType = "Backtick" | "DoubleQuote" | "SingleQuote" | "Word";
 
 export type TokenType =
   | WordType
@@ -28,6 +28,7 @@ export type Word = Token & {
 };
 
 export type WordVisitor<R, A = undefined> = {
+  visitBacktick: (word: Word, arg: A) => R;
   visitDoubleQuote: (word: Word, arg: A) => R;
   visitSingleQuote: (word: Word, arg: A) => R;
   visitWord: (word: Word, arg: A) => R;
@@ -39,6 +40,9 @@ export const visitWord = <R, A = undefined>(
   arg: A
 ): R => {
   switch (word.type) {
+    case "Backtick":
+      return visitor.visitBacktick(word, arg);
+
     case "DoubleQuote":
       return visitor.visitDoubleQuote(word, arg);
 

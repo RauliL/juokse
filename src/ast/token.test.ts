@@ -3,10 +3,12 @@ import { Position } from "./position";
 import { Word, WordType, WordVisitor, visitWord } from "./token";
 
 describe("visitWord()", () => {
+  const visitBacktick = jest.fn();
   const visitDoubleQuote = jest.fn();
   const visitSingleQuote = jest.fn();
   const visitSimpleWord = jest.fn();
   const visitor: Readonly<WordVisitor<undefined, undefined>> = {
+    visitBacktick,
     visitDoubleQuote,
     visitSingleQuote,
     visitWord: visitSimpleWord,
@@ -18,9 +20,16 @@ describe("visitWord()", () => {
   };
 
   beforeEach(() => {
+    visitBacktick.mockReset();
     visitDoubleQuote.mockReset();
     visitSingleQuote.mockReset();
     visitSimpleWord.mockReset();
+  });
+
+  it("should visit backtick", () => {
+    visitWord(visitor, { position, type: "Backtick", text: "test" }, undefined);
+
+    expect(visitBacktick).toBeCalled();
   });
 
   it("should visit double quoted string", () => {

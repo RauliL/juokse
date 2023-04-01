@@ -179,23 +179,23 @@ const executeLoopBody = async (
   }
 };
 
-export const executeScript = (
+export const executeScript = async (
   context: Context,
   script: Statement[],
   onError: (error: Error) => void
-): void => {
+): Promise<void> => {
   let index = 0;
-  const executeNextStatement = (): void => {
+  const executeNextStatement = async (): Promise<void> => {
     const statement = script[index++];
 
     if (statement) {
-      visitStatement(visitor, statement, context)
+      await visitStatement(visitor, statement, context)
         .catch(onError)
         .then(executeNextStatement);
     }
   };
 
   if (script.length > 0) {
-    executeNextStatement();
+    await executeNextStatement();
   }
 };
