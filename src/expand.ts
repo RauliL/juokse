@@ -8,7 +8,7 @@ import { Context } from "./context";
 import { JuokseError } from "./error";
 import { executeScript } from "./execute";
 
-const VARIABLE_PATTERN = /\$(\{[^}]+\}|\S+)/g;
+const VARIABLE_PATTERN = /\$(\{[^}]+\}|[^\s/]+)/g;
 
 // TODO: Add support for tilde expansion.
 
