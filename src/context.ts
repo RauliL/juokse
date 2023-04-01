@@ -21,7 +21,7 @@ export type ExecutionResult = {
  * Class which represents context of an script execution.
  */
 export class Context extends EventEmitter {
-  public readonly stdout: PassThrough;
+  public stdout: PassThrough;
   public readonly stderr: PassThrough;
   public readonly stdin: PassThrough;
   public readonly environment: Record<string, string>;

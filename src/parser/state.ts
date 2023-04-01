@@ -1,7 +1,12 @@
 import { Position, Token, TokenType, Word } from "../ast";
 import { JuokseError } from "../error";
 
-const WORD_TYPES = new Set<TokenType>(["DoubleQuote", "SingleQuote", "Word"]);
+const WORD_TYPES = new Set<TokenType>([
+  "Backtick",
+  "DoubleQuote",
+  "SingleQuote",
+  "Word",
+]);
 
 export class State {
   public readonly tokens: Token[];

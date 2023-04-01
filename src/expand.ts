@@ -1,8 +1,11 @@
 import { globSync, hasMagic } from "glob";
+import { PassThrough } from "stream";
 
 import { visitWord, Word, WordVisitor } from "./ast";
+import { compile } from "./compiler";
 import { Context } from "./context";
 import { JuokseError } from "./error";
+import { executeScript } from "./execute";
 
 const VARIABLE_PATTERN = /\$(\{[^}]+\}|\S+)/g;
 
@@ -18,6 +21,28 @@ const expandVariables = (context: Context, input: string): string =>
   });
 
 const expandVisitor: WordVisitor<Promise<string[]>, Context> = {
+  async visitBacktick(word: Word, context: Context): Promise<string[]> {
+    const script = await compile(word.position.filename, word.text);
+    const oldStdout = context.stdout;
+    const newStdout = new PassThrough();
+    let buffer = "";
+    let subshellError: Error | undefined;
+
+    context.stdout = newStdout;
+    context.stdout.on("data", (chunk) => {
+      buffer += chunk.toString("utf-8");
+    });
+    await executeScript(context, script, (error) => {
+      subshellError = error;
+    });
+    context.stdout = oldStdout;
+    if (subshellError) {
+      throw subshellError;
+    }
+
+    return [buffer];
+  },
+
   async visitDoubleQuote(word: Word, context: Context): Promise<string[]> {
     return [expandVariables(context, word.text)];
   },

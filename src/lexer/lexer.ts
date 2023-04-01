@@ -104,7 +104,12 @@ const lexString = (state: State): Word => {
 
   return {
     position,
-    type: separator === '"' ? "DoubleQuote" : "SingleQuote",
+    type:
+      separator === "`"
+        ? "Backtick"
+        : separator === '"'
+        ? "DoubleQuote"
+        : "SingleQuote",
     text,
   };
 };
@@ -248,7 +253,7 @@ const lexLogicalLine = (
 
     // TODO: Escaped new lines.
 
-    if (state.peek("'", '"')) {
+    if (state.peek("'", '"', "`")) {
       tokens.push(lexString(state));
       continue;
     }
