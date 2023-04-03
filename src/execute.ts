@@ -181,17 +181,15 @@ const executeLoopBody = async (
 
 export const executeScript = async (
   context: Context,
-  script: Statement[],
-  onError: (error: Error) => void
+  script: Statement[]
 ): Promise<void> => {
   let index = 0;
   const executeNextStatement = async (): Promise<void> => {
     const statement = script[index++];
 
     if (statement) {
-      await visitStatement(visitor, statement, context)
-        .catch(onError)
-        .then(executeNextStatement);
+      await visitStatement(visitor, statement, context);
+      await executeNextStatement();
     }
   };
 

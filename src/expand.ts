@@ -8,7 +8,7 @@ import { Context } from "./context";
 import { JuokseError } from "./error";
 import { executeScript } from "./execute";
 
-const VARIABLE_PATTERN = /\$(\{[^}]+\}|\S+)/g;
+const VARIABLE_PATTERN = /\$(\{[^}]+\}|[^\s/]+)/g;
 
 // TODO: Add support for tilde expansion.
 
@@ -27,18 +27,15 @@ const expandVisitor: WordVisitor<Promise<string[]>, Context> = {
     const oldStdout = context.stdout;
     const newStdout = new PassThrough();
     let buffer = "";
-    let subshellError: Error | undefined;
 
     context.stdout = newStdout;
     context.stdout.on("data", (chunk) => {
       buffer += chunk.toString("utf-8");
     });
-    await executeScript(context, script, (error) => {
-      subshellError = error;
-    });
-    context.stdout = oldStdout;
-    if (subshellError) {
-      throw subshellError;
+    try {
+      await executeScript(context, script);
+    } finally {
+      context.stdout = oldStdout;
     }
 
     return [trimEnd(buffer)];
