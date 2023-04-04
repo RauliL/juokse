@@ -50,22 +50,25 @@ const expandVisitor: WordVisitor<Promise<string[]>, Context> = {
   },
 
   async visitWord(word: Word, context: Context): Promise<string[]> {
-    const text = expandVariables(context, word.text);
+    const output: string[] = [];
 
-    if (hasMagic(text)) {
-      const results = globSync(text, { cwd: context.cwd });
+    for (const part of expandVariables(context, word.text).split(/\s+/)) {
+      if (hasMagic(part)) {
+        const results = globSync(part, { cwd: context.cwd });
 
-      if (!results.length) {
-        throw new JuokseError(
-          `No matches for wildcard '${text}'.`,
-          word.position
-        );
+        if (!results.length) {
+          throw new JuokseError(
+            `No matches for wildcard '${part}'.`,
+            word.position
+          );
+        }
+        output.push(...results);
+      } else {
+        output.push(part);
       }
-
-      return results;
     }
 
-    return [text];
+    return output;
   },
 };
 
