@@ -148,6 +148,21 @@ const builtinCommandSource = builtinCommand(1, 1, async (context, filename) =>
   ).then(() => ExitStatus.OK)
 );
 
+/**
+ * Deletes an variable from the context.
+ */
+const builtinCommandUnset = builtinCommand(
+  1,
+  undefined,
+  (context, ...names) => {
+    for (const name of names) {
+      delete context.variables[name];
+    }
+
+    return Promise.resolve(ExitStatus.OK);
+  }
+);
+
 export const builtinCommandMapping: Record<string, BuiltinCommandCallback> = {
   "!": builtinCommandNot,
   ".": builtinCommandSource,
@@ -159,4 +174,5 @@ export const builtinCommandMapping: Record<string, BuiltinCommandCallback> = {
   pwd: builtinCommandPwd,
   source: builtinCommandSource,
   true: builtinCommand(0, 0, () => Promise.resolve(ExitStatus.OK)),
+  unset: builtinCommandUnset,
 };
