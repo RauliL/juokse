@@ -11,6 +11,8 @@ import { executeScript } from "./execute";
 const VARIABLE_PATTERN = /\$(\{[^}]+\}|[^\s/]+)/g;
 
 // TODO: Add support for tilde expansion.
+// TODO: Add support for Bourne shell style variable expansions, such as
+// default values for missing variables.
 
 const expandVariables = (context: Context, input: string): string =>
   input.replace(VARIABLE_PATTERN, (match: string, name: string) => {
