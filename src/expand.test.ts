@@ -10,6 +10,7 @@ describe("expandWord()", () => {
 
   context.cwd = path.join(path.resolve(__dirname), "..");
   context.variables.foo = "bar";
+  context.variables.bar = "foo bar baz";
 
   it("should expand variables inside double quoted strings", () =>
     expect(
@@ -59,7 +60,7 @@ describe("expandWord()", () => {
           column: 1,
         },
         type: "Word",
-        text: "${bar}",
+        text: "${nonexistent}",
       })
     ).resolves.toEqual([""]));
 
@@ -113,4 +114,22 @@ describe("expandWord()", () => {
         text: "*.zzz",
       })
     ).rejects.toBeInstanceOf(JuokseError));
+
+  it("should treat whitespaces inside words as an array", () =>
+    expect(
+      expandWord(context, {
+        position: { filename: "test", line: 1, column: 1 },
+        type: "Word",
+        text: "$bar",
+      })
+    ).resolves.toEqual(["foo", "bar", "baz"]));
+
+  it("should not treat whitespaces inside double quoted string as an array", () =>
+    expect(
+      expandWord(context, {
+        position: { filename: "test", line: 1, column: 1 },
+        type: "DoubleQuote",
+        text: "$bar",
+      })
+    ).resolves.toEqual(["foo bar baz"]));
 });
