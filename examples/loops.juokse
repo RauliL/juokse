@@ -1,0 +1,11 @@
+#!/usr/bin/env juokse
+
+for i in foo bar baz:
+    echo $i
+
+i = 0
+while [ $i -ne 10 ]:
+    i = `expr $i + 1`
+    if [ $i -eq 3 ]:
+        continue
+    echo $i
