@@ -1,0 +1,17 @@
+#!/usr/bin/env juokse
+
+bot = 99
+
+while [ $bot -gt 1 ]:
+    printf "%d bottles of beer on the wall,\n" $bot
+    printf "%d bottles of beer!\n" $bot
+    printf "You take one down, pass it around,\n"
+
+    bot = `expr $bot - 1`
+
+    printf "%d bottles of beer on the wall!\n\n" $bot
+
+echo "1 bottle of beer on the wall,"
+echo "1 bottle of beer!"
+echo "You take it down, pass it around,"
+echo "No more bottles of beer!"
