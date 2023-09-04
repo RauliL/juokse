@@ -9,10 +9,10 @@ export class State {
   private readonly source: string;
   private offset: number;
 
-  public constructor(filename: string, source: string) {
+  public constructor(filename: string, line: number, source: string) {
     this.position = {
       filename,
-      line: 1,
+      line,
       column: 1,
     };
     this.source = source;

@@ -3,19 +3,19 @@ import { lex } from "./lexer";
 
 describe("lex()", () => {
   it("should return nothing when there is nothing to lex", () => {
-    expect(lex("test", "")).toHaveLength(0);
+    expect(lex("test", 1, "")).toHaveLength(0);
   });
 
   it("should ignore comments", () => {
-    expect(lex("test", "# This should be ignored.\n")).toHaveLength(0);
+    expect(lex("test", 1, "# This should be ignored.\n")).toHaveLength(0);
   });
 
   it("should ignore empty lines", () => {
-    expect(lex("test", "  \t  \n")).toHaveLength(0);
+    expect(lex("test", 1, "  \t  \n")).toHaveLength(0);
   });
 
   it("should be able to detect when indentation is increased", () => {
-    expect(lex("test", "  foo")).toEqual([
+    expect(lex("test", 1, "  foo")).toEqual([
       {
         position: {
           filename: "test",
@@ -53,7 +53,7 @@ describe("lex()", () => {
   });
 
   it("should be able to lex simple words", () => {
-    expect(lex("test", "foo bar")).toEqual([
+    expect(lex("test", 1, "foo bar")).toEqual([
       {
         position: {
           filename: "test",
@@ -76,7 +76,7 @@ describe("lex()", () => {
   });
 
   it("should parse escape sequences in simple words", () => {
-    expect(lex("test", "a\\u0030")).toEqual([
+    expect(lex("test", 1, "a\\u0030")).toEqual([
       {
         position: {
           filename: "test",
@@ -98,12 +98,12 @@ describe("lex()", () => {
   ])(
     "should be able to distinguish reserved keywords from simple words",
     (input, expectedType) => {
-      expect(lex("test", input)).toHaveProperty([0, "type"], expectedType);
+      expect(lex("test", 1, input)).toHaveProperty([0, "type"], expectedType);
     }
   );
 
   it.each([":", ";"])("should be able to lex separators", (separator) => {
-    expect(lex("test", separator)).toEqual([
+    expect(lex("test", 1, separator)).toEqual([
       {
         position: {
           filename: "test",
@@ -116,7 +116,7 @@ describe("lex()", () => {
   });
 
   it("should be able to lex double quoted strings", () => {
-    expect(lex("test", '"foo"')).toEqual([
+    expect(lex("test", 1, '"foo"')).toEqual([
       {
         position: {
           filename: "test",
@@ -130,7 +130,7 @@ describe("lex()", () => {
   });
 
   it("should be able to lex single quoted strings", () => {
-    expect(lex("test", "'foo'")).toEqual([
+    expect(lex("test", 1, "'foo'")).toEqual([
       {
         position: {
           filename: "test",
@@ -144,7 +144,7 @@ describe("lex()", () => {
   });
 
   it("should parse escape sequences inside double quoted strings", () => {
-    expect(lex("test", '"\\u0030"')).toEqual([
+    expect(lex("test", 1, '"\\u0030"')).toEqual([
       {
         position: {
           filename: "test",
@@ -158,7 +158,7 @@ describe("lex()", () => {
   });
 
   it("should not parse escape sequences inside single quoted strings", () => {
-    expect(lex("test", "'\\u0030'")).toEqual([
+    expect(lex("test", 1, "'\\u0030'")).toEqual([
       {
         position: {
           filename: "test",
@@ -172,6 +172,6 @@ describe("lex()", () => {
   });
 
   it("should throw exception if unable to parse an escape sequence", () => {
-    expect(() => lex("test", '"\\z"')).toThrowError(JuokseError);
+    expect(() => lex("test", 1, '"\\z"')).toThrowError(JuokseError);
   });
 });

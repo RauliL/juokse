@@ -262,8 +262,12 @@ const lexLogicalLine = (
   }
 };
 
-export const lex = (filename: string, source: string): Token[] => {
-  const state = new State(filename, source);
+export const lex = (
+  filename: string,
+  line: number,
+  source: string
+): Token[] => {
+  const state = new State(filename, line, source);
   const tokens: Token[] = [];
   const indentStack = new Stack<number>();
 

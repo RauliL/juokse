@@ -22,7 +22,7 @@ const mockPosition: Readonly<Position> = {
 };
 
 const createState = (source: string) =>
-  new State(lex(mockPosition.filename, source));
+  new State(lex(mockPosition.filename, 1, source));
 
 describe("parseBlockStatement()", () => {
   it("should require indentation after new line", () =>
