@@ -8,7 +8,7 @@ export const compile = (
 ): Promise<Statement[]> =>
   new Promise<Statement[]>((resolve, reject) => {
     try {
-      resolve(parse(lex(filename, source)));
+      resolve(parse(lex(filename, 1, source)));
     } catch (err) {
       reject(err);
     }

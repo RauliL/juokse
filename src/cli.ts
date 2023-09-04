@@ -8,6 +8,7 @@ import stripAnsi from "strip-ansi";
 import { compile } from "./compiler";
 import { Context } from "./context";
 import { executeScript } from "./execute";
+import { runInteractive } from "./interactive";
 import { ExitStatus } from "./status";
 
 type CommandLineOptions = {
@@ -139,6 +140,8 @@ export const run = () => {
       fs.readFileSync(options.filename, "utf-8"),
       options.filename
     );
+  } else if (process.stdin.isTTY) {
+    runInteractive(context);
   } else {
     let source = "";
 
