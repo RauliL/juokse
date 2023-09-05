@@ -1,7 +1,7 @@
 import os from "os";
 import path from "path";
 
-import { CommandStatement, Statement, Word } from "./ast";
+import { CommandStatement, Statement } from "./ast";
 import { Context } from "./context";
 import { ExitStatus } from "./status";
 
