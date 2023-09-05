@@ -1,7 +1,7 @@
 import os from "os";
 import path from "path";
 
-import { Statement } from "./ast";
+import { CommandStatement, Statement, Word } from "./ast";
 import { Context } from "./context";
 import { ExitStatus } from "./status";
 
@@ -160,5 +160,40 @@ describe("class Context", () => {
       expect(new Context().execute("false")).resolves.toEqual({
         status: ExitStatus.ERROR,
       }));
+
+    it("should prioritize functions over commands from file system", () => {
+      const context = new Context();
+
+      context.functions["pwd"] = {
+        position: {
+          filename: "test",
+          line: 1,
+          column: 1,
+        },
+        type: "Command",
+        command: {
+          position: {
+            filename: "test",
+            line: 1,
+            column: 1,
+          },
+          type: "Word",
+          text: "return",
+        },
+        args: [
+          {
+            position: {
+              filename: "test",
+              line: 1,
+              column: 1,
+            },
+            type: "Word",
+            text: "5",
+          },
+        ],
+      } as CommandStatement;
+
+      return expect(context.execute("pwd")).resolves.toEqual({ status: 5 });
+    });
   });
 });

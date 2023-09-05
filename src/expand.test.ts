@@ -1,5 +1,5 @@
 import path from "path";
-import { WordType } from "./ast";
+import { CommandStatement, Position, WordType } from "./ast";
 
 import { Context } from "./context";
 import { JuokseError } from "./error";
@@ -7,19 +7,45 @@ import { expandWord } from "./expand";
 
 describe("expandWord()", () => {
   const context = new Context();
+  const position: Position = {
+    filename: "test",
+    line: 1,
+    column: 1,
+  };
 
   context.cwd = path.join(path.resolve(__dirname), "..");
   context.variables.foo = "bar";
   context.variables.bar = "foo bar baz";
+  context.functions.baz = {
+    position,
+    type: "Command",
+    command: {
+      position,
+      type: "Word",
+      text: "echo",
+    },
+    args: [
+      {
+        position,
+        type: "Word",
+        text: "Hello, World!",
+      },
+    ],
+  } as CommandStatement;
+
+  it("should execute backticks and returns output of the command", () =>
+    expect(
+      expandWord(context, {
+        position,
+        type: "Backtick",
+        text: "baz",
+      })
+    ).resolves.toEqual(["Hello, World!"]));
 
   it("should expand variables inside double quoted strings", () =>
     expect(
       expandWord(context, {
-        position: {
-          filename: "test",
-          line: 1,
-          column: 1,
-        },
+        position,
         type: "DoubleQuote",
         text: "$foo",
       })
@@ -28,11 +54,7 @@ describe("expandWord()", () => {
   it("should not expand variables inside single quoted strings", () =>
     expect(
       expandWord(context, {
-        position: {
-          filename: "test",
-          line: 1,
-          column: 1,
-        },
+        position,
         type: "SingleQuote",
         text: "$foo",
       })
@@ -41,11 +63,7 @@ describe("expandWord()", () => {
   it("should expand variables inside simple words", () =>
     expect(
       expandWord(context, {
-        position: {
-          filename: "test",
-          line: 1,
-          column: 1,
-        },
+        position,
         type: "Word",
         text: "foo${foo}",
       })
@@ -54,11 +72,7 @@ describe("expandWord()", () => {
   it("should replace non-existent variables with empty strings", () =>
     expect(
       expandWord(context, {
-        position: {
-          filename: "test",
-          line: 1,
-          column: 1,
-        },
+        position,
         type: "Word",
         text: "${nonexistent}",
       })
@@ -67,7 +81,7 @@ describe("expandWord()", () => {
   it("should replace multiple variables inside double quoted string", () =>
     expect(
       expandWord(context, {
-        position: { filename: "test", line: 1, column: 1 },
+        position,
         type: "DoubleQuote",
         text: "${foo}test${foo}",
       })
@@ -76,11 +90,7 @@ describe("expandWord()", () => {
   it("should expand globs inside simple words", () =>
     expect(
       expandWord(context, {
-        position: {
-          filename: "test",
-          line: 1,
-          column: 1,
-        },
+        position,
         type: "Word",
         text: "*.json",
       })
@@ -91,11 +101,7 @@ describe("expandWord()", () => {
     (type) =>
       expect(
         expandWord(context, {
-          position: {
-            filename: "test",
-            line: 1,
-            column: 1,
-          },
+          position,
           type,
           text: "*.json",
         })
@@ -105,11 +111,7 @@ describe("expandWord()", () => {
   it("should fail if unable to expand globs", () =>
     expect(
       expandWord(context, {
-        position: {
-          filename: "test",
-          line: 1,
-          column: 1,
-        },
+        position,
         type: "Word",
         text: "*.zzz",
       })
@@ -118,7 +120,7 @@ describe("expandWord()", () => {
   it("should treat whitespaces inside words as an array", () =>
     expect(
       expandWord(context, {
-        position: { filename: "test", line: 1, column: 1 },
+        position,
         type: "Word",
         text: "$bar",
       })
@@ -127,7 +129,7 @@ describe("expandWord()", () => {
   it("should not treat whitespaces inside double quoted string as an array", () =>
     expect(
       expandWord(context, {
-        position: { filename: "test", line: 1, column: 1 },
+        position,
         type: "DoubleQuote",
         text: "$bar",
       })

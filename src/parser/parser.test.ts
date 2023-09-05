@@ -494,6 +494,14 @@ describe("parseStatement()", () => {
   it("should fail if there are no more tokens to be read", () =>
     expect(() => parseStatement(new State([]), [])).toThrow(JuokseError));
 
+  it("should be able to parse function definition", () => {
+    const output = [];
+
+    parseStatement(createState("def test: pass"), output);
+
+    expect(output).toHaveProperty([0, "type"], "FunctionDefinition");
+  });
+
   it('should be able to parse "for" statement', () => {
     const output = [];
 
