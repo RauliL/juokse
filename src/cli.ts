@@ -64,17 +64,21 @@ const log = (
   }
 
   text.split(/\r?\n/).forEach((line) => {
+    const noColor = process.env["NO_COLOR"] != null;
     let timeStamp = "";
 
     if (options.timeStampFormat) {
-      timeStamp = `[${chalk.grey(
-        format(Date.now(), options.timeStampFormat)
-      )}] `;
+      let now = format(Date.now(), options.timeStampFormat);
+
+      if (!noColor) {
+        now = chalk.grey(now);
+      }
+      timeStamp = `[${now}] `;
     }
     if (options.stripAnsi) {
       line = stripAnsi(line);
     }
-    if (color && process.env["NO_COLOR"] == null) {
+    if (color && !noColor) {
       line = color(line);
     }
     stream.write(`${timeStamp}${line.replace(/\r?\n$/, "")}\n`);
