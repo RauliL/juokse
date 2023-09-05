@@ -74,7 +74,7 @@ const log = (
     if (options.stripAnsi) {
       line = stripAnsi(line);
     }
-    if (color) {
+    if (color && process.env["NO_COLOR"] == null) {
       line = color(line);
     }
     stream.write(`${timeStamp}${line.replace(/\r?\n$/, "")}\n`);
