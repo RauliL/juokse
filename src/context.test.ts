@@ -1,6 +1,7 @@
 import os from "os";
 import path from "path";
 
+import { Statement } from "./ast";
 import { Context } from "./context";
 import { ExitStatus } from "./status";
 
@@ -121,6 +122,22 @@ describe("class Context", () => {
 
     it("should resolve builtin commands", () =>
       expect(typeof new Context().resolveExecutable("!")).toBe("function"));
+
+    it("should resolve custom functions", () => {
+      const context = new Context();
+      const statement: Statement = {
+        position: {
+          filename: "test",
+          line: 1,
+          column: 1,
+        },
+        type: "Pass",
+      };
+
+      context.functions["foo"] = statement;
+
+      expect(context.resolveExecutable("foo")).toBe(statement);
+    });
 
     it("should resolve executables", () => {
       const context = new Context();

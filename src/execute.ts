@@ -5,6 +5,7 @@ import {
   BlockStatement,
   CommandStatement,
   ForStatement,
+  FunctionDefinition,
   IfStatement,
   Statement,
   StatementVisitor,
@@ -95,6 +96,15 @@ export const visitor: StatementVisitor<Promise<ExecutionResult>, Context> = {
         break;
       }
     }
+
+    return { status: ExitStatus.OK };
+  },
+
+  async visitFunctionDefinition(
+    statement: FunctionDefinition,
+    context: Context
+  ): Promise<ExecutionResult> {
+    context.functions[statement.name] = statement.body;
 
     return { status: ExitStatus.OK };
   },

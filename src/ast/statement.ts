@@ -7,6 +7,7 @@ export type StatementType =
   | "Block"
   | "Command"
   | "For"
+  | "FunctionDefinition"
   | "If"
   | "Pass"
   | "While";
@@ -40,6 +41,12 @@ export type ForStatement = Statement & {
   body: Statement;
 };
 
+export type FunctionDefinition = Statement & {
+  type: "FunctionDefinition";
+  name: string;
+  body: Statement;
+};
+
 export type IfStatement = Statement & {
   type: "If";
   test: CommandStatement;
@@ -62,6 +69,7 @@ export type StatementVisitor<R, A = undefined> = {
   visitBlock: (statement: BlockStatement, arg: A) => R;
   visitCommand: (statement: CommandStatement, arg: A) => R;
   visitFor: (statement: ForStatement, arg: A) => R;
+  visitFunctionDefinition: (statement: FunctionDefinition, arg: A) => R;
   visitIf: (statement: IfStatement, arg: A) => R;
   visitPass: (statement: PassStatement, arg: A) => R;
   visitWhile: (statement: WhileStatement, arg: A) => R;
@@ -84,6 +92,12 @@ export const visitStatement = <R, A = undefined>(
 
     case "For":
       return visitor.visitFor(statement as ForStatement, arg);
+
+    case "FunctionDefinition":
+      return visitor.visitFunctionDefinition(
+        statement as FunctionDefinition,
+        arg
+      );
 
     case "If":
       return visitor.visitIf(statement as IfStatement, arg);

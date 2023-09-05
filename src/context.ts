@@ -7,9 +7,11 @@ import os from "os";
 import path from "path";
 import { PassThrough } from "stream";
 
+import { Statement } from "./ast";
 import { BuiltinCommandCallback, builtinCommandMapping } from "./builtins";
 import { JuokseError } from "./error";
 import { ExitStatus } from "./status";
+import { executeScript } from "./execute";
 
 export type ExecutionResult = {
   pid?: number;
@@ -26,6 +28,7 @@ export class Context extends EventEmitter {
   public readonly stdin: PassThrough;
   public readonly environment: Record<string, string>;
   public readonly variables: Record<string, string>;
+  public readonly functions: Record<string, Statement>;
 
   public constructor() {
     super();
@@ -36,6 +39,7 @@ export class Context extends EventEmitter {
 
     this.environment = {};
     this.variables = {};
+    this.functions = {};
   }
 
   /**
@@ -152,9 +156,13 @@ export class Context extends EventEmitter {
    */
   public resolveExecutable(
     executable: string
-  ): BuiltinCommandCallback | string | null {
+  ): BuiltinCommandCallback | Statement | string | null {
     if (path.isAbsolute(executable)) {
       return isExe.sync(executable) ? executable : null;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(this.functions, executable)) {
+      return this.functions[executable];
     }
 
     if (
@@ -212,6 +220,26 @@ export class Context extends EventEmitter {
         this.emit("process finish", { executable, args, status });
 
         return { status };
+      });
+    }
+
+    if (typeof resolvedExecutable !== "string") {
+      // TODO: Implement variable scopes to avoid variable pollution.
+      this.variables["#"] = `${args.length}`;
+      this.variables["*"] = args.join(" ");
+      for (let i = 0; i < 9; ++i) {
+        this.variables[`${i + 1}`] = args[i];
+      }
+
+      return executeScript(this, [resolvedExecutable]).then(() => {
+        this.variables["?"] = `${ExitStatus.OK}`;
+        this.emit("process finish", {
+          executable,
+          args,
+          status: ExitStatus.OK,
+        });
+
+        return { status: ExitStatus.OK };
       });
     }
 

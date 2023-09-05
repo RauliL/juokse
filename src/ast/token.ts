@@ -7,6 +7,7 @@ export type TokenType =
   | WordType
   | "Dedent"
   | "Indent"
+  | "KeywordDef"
   | "KeywordElse"
   | "KeywordFor"
   | "KeywordIf"

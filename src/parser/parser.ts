@@ -3,6 +3,7 @@ import {
   BlockStatement,
   CommandStatement,
   ForStatement,
+  FunctionDefinition,
   IfStatement,
   PassStatement,
   Position,
@@ -36,6 +37,20 @@ export const parseBlockStatement = (
     position,
     type: "Block",
     body,
+  };
+};
+
+export const parseFunctionDefinition = (state: State): FunctionDefinition => {
+  const { position } = state.read("KeywordDef");
+  const name = state.read<Word>("Word").text;
+
+  state.read(":");
+
+  return {
+    position,
+    type: "FunctionDefinition",
+    name,
+    body: parseBlockStatement(state, position),
   };
 };
 
@@ -181,6 +196,10 @@ export const parseStatement = (state: State, output: Statement[]): void => {
   }
 
   switch (state.tokens[state.offset].type) {
+    case "KeywordDef":
+      output.push(parseFunctionDefinition(state));
+      break;
+
     case "KeywordFor":
       output.push(parseForStatement(state));
       break;

@@ -6,6 +6,7 @@ import { State } from "./state";
 import { isWordPart } from "./utils";
 
 const RESERVED_KEYWORDS = new Map<string, TokenType>([
+  ["def", "KeywordDef"],
   ["else", "KeywordElse"],
   ["for", "KeywordFor"],
   ["if", "KeywordIf"],
