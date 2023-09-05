@@ -45,3 +45,13 @@ export class ContinueError extends JuokseError {
     Object.setPrototypeOf(this, ContinueError.prototype);
   }
 }
+
+export class ReturnError extends JuokseError {
+  public readonly status: number;
+
+  public constructor(status: number) {
+    super("Used 'return' outside function call.");
+    this.status = status;
+    Object.setPrototypeOf(this, ReturnError.prototype);
+  }
+}

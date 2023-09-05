@@ -9,7 +9,7 @@ import { PassThrough } from "stream";
 
 import { Statement } from "./ast";
 import { BuiltinCommandCallback, builtinCommandMapping } from "./builtins";
-import { JuokseError } from "./error";
+import { JuokseError, ReturnError } from "./error";
 import { ExitStatus } from "./status";
 import { executeScript } from "./execute";
 
@@ -231,16 +231,31 @@ export class Context extends EventEmitter {
         this.variables[`${i + 1}`] = args[i];
       }
 
-      return executeScript(this, [resolvedExecutable]).then(() => {
-        this.variables["?"] = `${ExitStatus.OK}`;
-        this.emit("process finish", {
-          executable,
-          args,
-          status: ExitStatus.OK,
-        });
+      return executeScript(this, [resolvedExecutable])
+        .then(() => {
+          this.variables["?"] = `${ExitStatus.OK}`;
+          this.emit("process finish", {
+            executable,
+            args,
+            status: ExitStatus.OK,
+          });
 
-        return { status: ExitStatus.OK };
-      });
+          return { status: ExitStatus.OK };
+        })
+        .catch((err) => {
+          if (err instanceof ReturnError) {
+            this.variables["?"] = `${err.status}`;
+            this.emit("process finish", {
+              executable,
+              args,
+              status: err.status,
+            });
+
+            return Promise.resolve({ status: err.status });
+          }
+
+          return Promise.reject(err);
+        });
     }
 
     return new Promise<ExecutionResult>((resolve, reject) => {
