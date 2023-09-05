@@ -303,6 +303,58 @@ describe("visitor", () => {
         )
       ).rejects.toBeInstanceOf(BreakError));
 
+    it('should allow breaking out of the loop when "continue" statement is encountered', () => {
+      const context = new Context();
+
+      context.variables["foo"] = "bar";
+
+      return visitor
+        .visitFor(
+          {
+            position,
+            type: "For",
+            variable: "i",
+            subjects: [
+              {
+                position,
+                type: "Word",
+                text: "foo",
+              },
+            ],
+            body: {
+              position,
+              type: "Block",
+              body: [
+                {
+                  position,
+                  type: "Command",
+                  command: {
+                    position,
+                    type: "Word",
+                    text: "continue",
+                  },
+                  args: [],
+                },
+                {
+                  position,
+                  type: "Assignment",
+                  variable: "foo",
+                  value: {
+                    position,
+                    type: "Word",
+                    text: "baz",
+                  },
+                } as AssignmentStatement,
+              ],
+            } as BlockStatement,
+          },
+          context
+        )
+        .then(() => {
+          expect(context.variables).toHaveProperty("foo", "bar");
+        });
+    });
+
     it('should throw `ContinueError` when nested "continue" statement is countered', () =>
       expect(
         visitor.visitFor(
