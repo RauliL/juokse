@@ -38,7 +38,7 @@ const completePath = (matches: Set<string>, word: string) => {
           const fullPath = path.join(dir, file);
 
           matches.add(
-            fs.statSync(fullPath).isDirectory
+            fs.statSync(fullPath).isDirectory()
               ? `${fullPath}${path.sep}`
               : fullPath
           );
