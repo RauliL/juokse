@@ -3,6 +3,7 @@ import {
   BlockStatement,
   CommandStatement,
   Position,
+  Statement,
 } from "./ast";
 import { Context } from "./context";
 import {
@@ -336,6 +337,36 @@ describe("visitor", () => {
           new Context()
         )
       ).rejects.toBeInstanceOf(ContinueError));
+  });
+
+  describe("visitFunctionDefinition()", () => {
+    it("should define new function in the context", () => {
+      const context = new Context();
+      const statement: Statement = {
+        position: {
+          filename: "test",
+          line: 1,
+          column: 1,
+        },
+        type: "Pass",
+      };
+
+      visitor.visitFunctionDefinition(
+        {
+          position: {
+            filename: "test",
+            line: 1,
+            column: 1,
+          },
+          type: "FunctionDefinition",
+          name: "foo",
+          body: statement,
+        },
+        context
+      );
+
+      expect(context.functions).toHaveProperty("foo", statement);
+    });
   });
 
   describe("visitIf()", () => {

@@ -6,6 +6,7 @@ import {
   parseBlockStatement,
   parseCommandStatement,
   parseForStatement,
+  parseFunctionDefinition,
   parseIfStatement,
   parsePassStatement,
   parseSimpleStatement,
@@ -120,6 +121,37 @@ describe("parseForStatement()", () => {
         type: "Block",
         body: [
           { position: { filename: "test", line: 1, column: 26 }, type: "Pass" },
+        ],
+      },
+    }));
+});
+
+describe("parseFunctionDefinition()", () => {
+  it('should require keyword "for"', () =>
+    expect(() => parseFunctionDefinition(createState("while"))).toThrow(
+      JuokseError
+    ));
+
+  it('should require name of the function after "def" keyword', () =>
+    expect(() => parseForStatement(createState("def 'failure'"))).toThrow(
+      JuokseError
+    ));
+
+  it('should require ":" after function name', () =>
+    expect(() => parseForStatement(createState("def function while"))).toThrow(
+      JuokseError
+    ));
+
+  it("should be able to parse function definition", () =>
+    expect(parseFunctionDefinition(createState("def function: pass"))).toEqual({
+      position: { filename: "test", line: 1, column: 1 },
+      type: "FunctionDefinition",
+      name: "function",
+      body: {
+        position: { filename: "test", line: 1, column: 1 },
+        type: "Block",
+        body: [
+          { position: { filename: "test", line: 1, column: 15 }, type: "Pass" },
         ],
       },
     }));

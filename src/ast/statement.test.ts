@@ -12,6 +12,7 @@ import {
   WhileStatement,
   visitStatement,
   StatementType,
+  FunctionDefinition,
 } from "./statement";
 
 describe("visitStatement()", () => {
@@ -19,6 +20,7 @@ describe("visitStatement()", () => {
   const visitBlock = jest.fn();
   const visitCommand = jest.fn();
   const visitFor = jest.fn();
+  const visitFunctionDefinition = jest.fn();
   const visitIf = jest.fn();
   const visitPass = jest.fn();
   const visitWhile = jest.fn();
@@ -27,6 +29,7 @@ describe("visitStatement()", () => {
     visitBlock,
     visitCommand,
     visitFor,
+    visitFunctionDefinition,
     visitIf,
     visitPass,
     visitWhile,
@@ -42,6 +45,7 @@ describe("visitStatement()", () => {
     visitBlock.mockReset();
     visitCommand.mockReset();
     visitFor.mockReset();
+    visitFunctionDefinition.mockReset();
     visitIf.mockReset();
     visitPass.mockReset();
     visitWhile.mockReset();
@@ -112,6 +116,24 @@ describe("visitStatement()", () => {
     );
 
     expect(visitFor).toBeCalled();
+  });
+
+  it("should visit function definition", () => {
+    visitStatement(
+      visitor,
+      {
+        position,
+        type: "FunctionDefinition",
+        name: "test",
+        body: {
+          position,
+          type: "Pass",
+        },
+      } as FunctionDefinition,
+      undefined
+    );
+
+    expect(visitFunctionDefinition).toBeCalled();
   });
 
   it('should visit "if" statement', () => {

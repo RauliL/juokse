@@ -1,0 +1,9 @@
+#!/usr/bin/env juokse
+
+def foo:
+    echo "I received $# arguments and they are: $*"
+
+def bar:
+    foo a b c d e f
+
+bar
