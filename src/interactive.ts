@@ -35,7 +35,13 @@ const completePath = (matches: Set<string>, word: string) => {
     try {
       for (const file of fs.readdirSync(dir)) {
         if (file.startsWith(base)) {
-          matches.add(path.join(dir, file));
+          const fullPath = path.join(dir, file);
+
+          matches.add(
+            fs.statSync(fullPath).isDirectory
+              ? `${fullPath}${path.sep}`
+              : fullPath
+          );
         }
       }
     } catch {
