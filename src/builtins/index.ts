@@ -11,6 +11,7 @@ import { builtinCommandSource } from "./source";
 import { BuiltinCommandCallback } from "./types";
 import { builtinCommandUnset } from "./unset";
 import { builtinCommand } from "./utils";
+import { builtinCommandWhich } from "./which";
 
 export { BuiltinCommandCallback } from "./types";
 
@@ -28,4 +29,5 @@ export const builtinCommandMapping: Record<string, BuiltinCommandCallback> = {
   source: builtinCommandSource,
   true: builtinCommand(0, 0, () => Promise.resolve(ExitStatus.OK)),
   unset: builtinCommandUnset,
+  which: builtinCommandWhich,
 };
