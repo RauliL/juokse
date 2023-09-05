@@ -748,6 +748,11 @@
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.3.13.tgz#da4bfd73f49bd541d28920ab0e2bf0ee80f71c91"
   integrity sha512-21cFJr9z3g5dW8B0CVI9g2O9beqaThGQ6ZFBqHfwhzLDKUxaqTIy3vnfah/UPkfOiF2pLq+tGz+W8RyCskuslw==
 
+"@types/sprintf-js@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@types/sprintf-js/-/sprintf-js-1.1.2.tgz#a4fcb84c7344f39f70dc4eec0e1e7f10a48597a3"
+  integrity sha512-hkgzYF+qnIl8uTO8rmUSVSfQ8BIfMXC4yJAF4n8BE758YsKBZvFC4NumnAegj7KmylP0liEZNpb9RRGFMbFejA==
+
 "@types/stack-utils@^2.0.0":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
@@ -984,6 +989,11 @@ babel-preset-jest@^29.4.3:
   dependencies:
     babel-plugin-jest-hoist "^29.4.3"
     babel-preset-current-node-syntax "^1.0.0"
+
+backslash@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/backslash/-/backslash-0.2.0.tgz#6c3c1fce7e7e714ccfc10fd74f0f73410677375f"
+  integrity sha512-Avs+8FUZ1HF/VFP4YWwHQZSGzRPm37ukU1JQYQWijuHhtXdOuAzcZ8PcAzfIw898a8PyBzdn+RtnKA6MzW0X2A==
 
 balanced-match@^1.0.0:
   version "1.0.2"
@@ -2691,6 +2701,11 @@ spdx-license-ids@^3.0.0:
   version "3.0.13"
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-3.0.13.tgz#7189a474c46f8d47c7b0da4b987bb45e908bd2d5"
   integrity sha512-XkD+zwiqXHikFZm4AX/7JSCXA98U5Db4AFd5XUg/+9UNtnH75+Z9KxtpYiJZx36mUDVOwH83pl7yvCer6ewM3w==
+
+sprintf-js@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.1.2.tgz#da1765262bf8c0f571749f2ad6c26300207ae673"
+  integrity sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==
 
 sprintf-js@~1.0.2:
   version "1.0.3"
