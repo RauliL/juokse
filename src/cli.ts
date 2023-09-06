@@ -2,7 +2,6 @@ import chalk, { ChalkFunction } from "chalk";
 import { program } from "commander";
 import { format } from "date-fns";
 import fs from "fs";
-import { sync as readPackageSync } from "read-pkg";
 import stripAnsi from "strip-ansi";
 
 import { compile } from "./compiler";
@@ -21,7 +20,6 @@ type CommandLineOptions = {
 
 const parseCommandLineOptions = (): CommandLineOptions => {
   program
-    .version(readPackageSync().version)
     .usage("[options] [file] [arguments]")
     .option("-s, --strip-ansi", "Strip ANSI escape codes from process outputs")
     .option("-t, --time-stamp-format [format]", "Specify format of timestamps")

@@ -1,6 +1,6 @@
 {
   "name": "juokse",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Batch processor with Python like syntax",
   "author": "Rauli Laine",
   "license": "BSD-2-Clause",
@@ -47,7 +47,6 @@
     "glob": "^9.0.2",
     "isexe": "^2.0.0",
     "lodash": "^4.17.21",
-    "read-pkg": "^5.2.0",
     "sprintf-js": "^1.1.2",
     "strip-ansi": "^6.0.1"
   },
