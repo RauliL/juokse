@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { TokenType, Word } from "../ast";
 import { JuokseError } from "../error";
 import { State } from "./state";

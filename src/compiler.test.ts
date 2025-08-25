@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { compile } from "./compiler";
 import { JuokseError } from "./error";
 

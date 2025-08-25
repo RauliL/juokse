@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import { JuokseError } from "../error";
 import { Position } from "./position";
 import {
@@ -16,14 +18,14 @@ import {
 } from "./statement";
 
 describe("visitStatement()", () => {
-  const visitAssignment = jest.fn();
-  const visitBlock = jest.fn();
-  const visitCommand = jest.fn();
-  const visitFor = jest.fn();
-  const visitFunctionDefinition = jest.fn();
-  const visitIf = jest.fn();
-  const visitPass = jest.fn();
-  const visitWhile = jest.fn();
+  const visitAssignment = vi.fn();
+  const visitBlock = vi.fn();
+  const visitCommand = vi.fn();
+  const visitFor = vi.fn();
+  const visitFunctionDefinition = vi.fn();
+  const visitIf = vi.fn();
+  const visitPass = vi.fn();
+  const visitWhile = vi.fn();
   const visitor: Readonly<StatementVisitor<undefined, undefined>> = {
     visitAssignment,
     visitBlock,

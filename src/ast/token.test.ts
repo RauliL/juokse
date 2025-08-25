@@ -1,12 +1,14 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import { JuokseError } from "../error";
 import { Position } from "./position";
 import { Word, WordType, WordVisitor, visitWord } from "./token";
 
 describe("visitWord()", () => {
-  const visitBacktick = jest.fn();
-  const visitDoubleQuote = jest.fn();
-  const visitSingleQuote = jest.fn();
-  const visitSimpleWord = jest.fn();
+  const visitBacktick = vi.fn();
+  const visitDoubleQuote = vi.fn();
+  const visitSingleQuote = vi.fn();
+  const visitSimpleWord = vi.fn();
   const visitor: Readonly<WordVisitor<undefined, undefined>> = {
     visitBacktick,
     visitDoubleQuote,

@@ -1,6 +1,7 @@
 import path from "path";
-import { CommandStatement, Position, WordType } from "./ast";
+import { describe, expect, it } from "vitest";
 
+import { CommandStatement, Position, WordType } from "./ast";
 import { Context } from "./context";
 import { JuokseError } from "./error";
 import { expandWord } from "./expand";
@@ -94,7 +95,7 @@ describe("expandWord()", () => {
         type: "Word",
         text: "*.json",
       })
-    ).resolves.toHaveLength(3));
+    ).resolves.toHaveLength(2));
 
   it.each(["DoubleQuote" as WordType, "SingleQuote" as WordType])(
     "should not expand globs inside strings",

@@ -1,8 +1,0 @@
-{
-  "collectCoverageFrom": [
-    "<rootDir>/src/**/*.ts",
-    "!<rootDir>/src/**/*/index.ts",
-    "!<rootDir>/src/index.ts"
-  ],
-  "preset": "ts-jest"
-}

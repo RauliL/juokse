@@ -1,5 +1,6 @@
 import os from "os";
 import path from "path";
+import { describe, expect, it } from "vitest";
 
 import { CommandStatement, Statement } from "./ast";
 import { Context } from "./context";
