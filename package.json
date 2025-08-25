@@ -17,7 +17,7 @@
     "script"
   ],
   "engines": {
-    "node": ">=16"
+    "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
     "build": "tsc",
@@ -26,7 +26,7 @@
     "clean": "rimraf './lib'",
     "prebuild": "$npm_execpath run clean",
     "prepack": "$npm_execpath run build",
-    "test": "jest"
+    "test": "vitest"
   },
   "files": [
     "bin/",
@@ -53,18 +53,17 @@
   "devDependencies": {
     "@types/glob": "^8.1.0",
     "@types/isexe": "^2.0.1",
-    "@types/jest": "^29.4.0",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.15.5",
     "@types/sprintf-js": "^1.1.2",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
+    "@vitest/coverage-istanbul": "^3.2.4",
     "eslint": "^8.35.0",
     "eslint-config-prettier": "^8.7.0",
-    "jest": "^29.4.3",
     "prettier": "^2.8.4",
     "rimraf": "^4.1.2",
-    "ts-jest": "^29.0.5",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "vitest": "^3.2.4"
   }
 }

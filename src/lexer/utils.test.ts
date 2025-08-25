@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { isNewLine, isWordPart } from "./utils";
 
 describe("isNewLine()", () => {

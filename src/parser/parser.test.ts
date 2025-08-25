@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { Position } from "../ast";
 import { JuokseError } from "../error";
 import { lex } from "../lexer";
